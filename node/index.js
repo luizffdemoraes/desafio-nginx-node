@@ -1,6 +1,10 @@
+// Importação dos módulos necessários
 const express = require('express')
+const mysql = require('mysql');
 const app = express()
 const port = 3000
+
+// Configurações para conexão com o banco de dados MySQL
 const config = {
     host: 'db',
     user: 'root',
@@ -8,26 +12,29 @@ const config = {
     database: 'nodedb'
 };
 
-const mysql = require('mysql')
+// Criação da conexão com o banco de dados MySQL
 const connection = mysql.createConnection(config)
 
-const sql = `INSERT INTO people(name) values('Wesley')`
+// Comando SQL para inserção de registros na tabela 'people'
+const sql = `INSERT INTO people(name) values('Wesley');`
 connection.query(sql)
-connection.end()
 
+// Rota GET para a raiz ('/')
 app.get('/', (req, res) => {
-    const selectSql = `SELECT name FROM people`
-    connection.query(selectSql, (err, results, fields) => {
-        if (err) throw err;
-        let namesList = '<ul>'
-        results.forEach(row => {
-            namesList += `<li>${row.name}</li>`
-        });
-        namesList += '</ul>'
-        res.send(`<h1>Full Cycle Rocks!</h1>${namesList}`)
+    
+    var html = "<h1>Full Cycle Rocks!</h1><br/>";
+
+    connection.query("SELECT * FROM nodedb.people", function (err, result) {
+    
+        result.forEach(function(row, index) {
+            html += row.id + " " + row.name + "<br/>";
+        })
+
+        res.send(html);
     });
 })
 
+// Inicia o servidor Express na porta especificada
 app.listen(port, () => {
     console.log('Rodando na porta ' + port)
 })
