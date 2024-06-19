@@ -4,8 +4,7 @@ services:
 
   db:
     image: mysql:5.7
-    command: --innodb-use-native-aio=0
-    container_name: db    
+    command: --innodb-use-native-aio=0 
     restart: always
     tty: true
     volumes:      
@@ -21,7 +20,6 @@ services:
   app:
     build:
       context: node
-    container_name: app
     entrypoint: dockerize -wait tcp://db:3306 -timeout 60s docker-entrypoint.sh node index.js
     command: npm start
     volumes:
@@ -38,7 +36,6 @@ services:
   nginx:
     build:
       context: ./nginx
-    container_name: nginx
     restart: always
     ports:
       - "8080:80"
